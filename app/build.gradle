@@ -4,7 +4,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    buildToolsVersion "29.0.0"
 
     defaultConfig {
         applicationId "app.riju.googletranslatorapplication"
@@ -51,6 +51,6 @@ dependencies {
 
     implementation 'com.google.mlkit:translate:16.1.2'
 
-        implementation "androidx.multidex:multidex:2.0.1"
+    implementation "androidx.multidex:multidex:2.0.1"
 
 }

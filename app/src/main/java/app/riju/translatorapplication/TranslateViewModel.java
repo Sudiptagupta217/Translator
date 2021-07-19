@@ -1,8 +1,14 @@
 package app.riju.translatorapplication;
 
 import android.app.Application;
-import android.media.MediaPlayer;
 import android.util.LruCache;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,22 +27,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import okhttp3.internal.http.StreamAllocation;
 
 public class TranslateViewModel extends AndroidViewModel {
     private static final int NUM_TRANSLATORS = 3;
 
     private final RemoteModelManager modelManager;
-    private final LruCache<TranslatorOptions, Translator> translator =
+    private final LruCache<TranslatorOptions, Translator> translators =
             new LruCache<TranslatorOptions, Translator>(NUM_TRANSLATORS) {
 
                 @Override
@@ -68,9 +65,8 @@ public class TranslateViewModel extends AndroidViewModel {
                 } else {
                     translatedText.setValue(new ResultOrError(null, task.getException()));
                 }
+                 fetchDownloadModels();
             }
-
-//            fetchDownloadModel();
         };
         translatedText.addSource(sourceText, new Observer<TranslateLanguage.Language>() {
             @Override
@@ -79,18 +75,18 @@ public class TranslateViewModel extends AndroidViewModel {
             }
         });
 
+
         Observer<Language> languageObserver = new Observer<Language>() {
             @Override
             public void onChanged(Language language) {
                 translate().addOnCompleteListener(processTrnslation);
             }
         };
+
         translatedText.addSource(sourceLang, languageObserver);
         translatedText.addSource(targetLang,languageObserver);
 
-        fetchDownloadModel();
-
-
+        fetchDownloadModels();
     }
 
     List<Language> getAvailableLanguages(){
@@ -103,6 +99,7 @@ public class TranslateViewModel extends AndroidViewModel {
         }
         return languages;
     }
+
     private TranslateRemoteModel  getModel(String languageCode){
         return new TranslateRemoteModel().Builder(languageCode).build();
     }
@@ -113,7 +110,7 @@ public class TranslateViewModel extends AndroidViewModel {
                 .addOnSuccessListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        fetchDownloadModel();
+                        fetchDownloadModels();
                     }
                 });
     }
@@ -122,10 +119,11 @@ public class TranslateViewModel extends AndroidViewModel {
         modelManager.deleteDownloadedModel(model).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                fetchDownloadModel();
+                fetchDownloadModels();
             }
         });
     }
+
 
     public Task<String> translate(){
         final String text = sourceText.getValue();
@@ -141,12 +139,12 @@ public class TranslateViewModel extends AndroidViewModel {
                 .setTargetLanguage(targetLangCode)
                 .build();
 
-        return  translator.get(options).downloadModelIfNeeded().continueWithTask(
+        return  translators.get(options).downloadModelIfNeeded().continueWithTask(
                 new Continuation<Void, Task<String>>() {
                     @Override
                     public Task<String> then(@NonNull Task<Void> task) throws Exception {
                         if (task.isSuccessful()){
-                            return translator.get(options).translate(text);
+                            return translators.get(options).translate(text);
                         }
                         else {
                             Exception e = task.getException();
@@ -158,7 +156,8 @@ public class TranslateViewModel extends AndroidViewModel {
                     }
                 });
     }
-    private void fetchDownloadModel(){
+
+    private void fetchDownloadModels(){
         modelManager.getDownloadedModels(TranslateRemoteModel.class).addOnSuccessListener(new OnSuccessListener<Set<TranslateRemoteModel>>() {
             @Override
             public void onSuccess(Set<TranslateRemoteModel> translateRemoteModels) {
@@ -184,7 +183,7 @@ public class TranslateViewModel extends AndroidViewModel {
         }
     }
 
-    static class Language implements Comparable<TranslateLanguage.Language> {
+    static class Language implements Comparable<Language> {
         private String code;
 
         Language(String code) {
@@ -210,7 +209,7 @@ public class TranslateViewModel extends AndroidViewModel {
             return otherLang.code.equals(code);
         }
 
-        @Override
+        @NonNull
         public String toString() {
             return code + " - " + getDisplayName();
         }
@@ -228,6 +227,6 @@ public class TranslateViewModel extends AndroidViewModel {
     }
     protected void onCleared(){
         super.onCleared();
-        translator.evictAll();
+        translators.evictAll();
     }
 }

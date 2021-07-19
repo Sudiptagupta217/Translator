@@ -35,7 +35,7 @@ public class TranslateFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static TranslateFragment newInstance(String param1, String param2) {
+    public static TranslateFragment newInstance() {
         TranslateFragment fragment = new TranslateFragment();
         return fragment;
     }
@@ -85,7 +85,7 @@ public class TranslateFragment extends Fragment {
 
         targetLangSelector.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
                 setProgressText(targetTextView);
                 viewModel.targetLang.setValue(adapter.getItem(i));
             }
@@ -143,6 +143,7 @@ public class TranslateFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                setProgressText(targetTextView);
                 viewModel.sourceText.postValue(s.toString());
             }
         });
