@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/main"
     tools:context=".TranslateFragment">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -17,7 +18,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:inputType="textMultiLine"
-        app:layout_constraintBottom_toTopOf="@+id/sourceLineSelected"
+        app:layout_constraintBottom_toTopOf="@+id/sourceLangSelector"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -38,13 +39,13 @@
         android:layout_margin="8dp"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/buttonSyncSource"
-        app:layout_constraintEnd_toStartOf="@+id/bottonSwitchLang"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSwitchLang"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/bottonSwitchLang"
-        style="@style/IconOnButton"
+        android:id="@+id/buttonSwitchLang"
+        style="@style/IconOnlyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -52,6 +53,7 @@
         android:backgroundTint="@android:color/darker_gray"
         android:text=""
         app:icon="@drawable/ic_compare_arrows"
+        android:background="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/targetLangSelector"
         app:layout_constraintStart_toEndOf="@+id/sourceLangSelector"
         app:layout_constraintTop_toTopOf="@+id/sourceLangSelector" />
@@ -64,7 +66,7 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@id/sourceLangSelector"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/bottonSwitchLang"
+        app:layout_constraintStart_toEndOf="@id/buttonSwitchLang"
         app:layout_constraintTop_toTopOf="@id/sourceLangSelector" />
 
     <ToggleButton

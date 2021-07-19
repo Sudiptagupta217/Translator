@@ -4,13 +4,14 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "31.0.0"
+    buildToolsVersion "30.0.0"
 
     defaultConfig {
         applicationId "app.riju.googletranslatorapplication"
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 1
+        multiDexEnabled true // add this line
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -49,4 +50,7 @@ dependencies {
     implementation 'org.apache.commons:commons-collections4:4.4'
 
     implementation 'com.google.mlkit:translate:16.1.2'
+
+        implementation "androidx.multidex:multidex:2.0.1"
+
 }

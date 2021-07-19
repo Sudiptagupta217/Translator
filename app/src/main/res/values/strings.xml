@@ -2,4 +2,13 @@
     <string name="app_name">Google Translator Application</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="downloaded_model_label">Donloaded models: %1$s</string>
+
+    <string name="translate_progress">Translating...</string>
+
+
+
+
+
 </resources>
